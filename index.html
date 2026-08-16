@@ -36,53 +36,55 @@
 
 <main id="main">
 
-  <!-- Opening. The thesis: the piece is cut to a measurement you give. -->
-  <section class="wrap opening">
-    <div>
-      <h1>
-        Send us the opening.
-        <span class="cut">We cut the basin, the niche or the shelf to fit it, from a single block of natural stone.</span>
-      </h1>
-      <p class="opening__lede">
-        Every piece here is carved to order in our own workshop. There is no stock size,
-        so the measurement you give us is the measurement you receive — which is why
-        architects and contractors use us for bathrooms that have already been tiled.
-      </p>
-      <div class="opening__actions">
-        <a class="btn btn--solid" href="https://www.etsy.com/shop/ClassMarble">See all 47 pieces on Etsy</a>
-        <a class="btn btn--edge" href="#project">Start a project order</a>
+  <!-- Opening. The thesis: the piece is cut to a measurement you give.
+       The wall runs the full window; the copy sits on its calm plaster. -->
+  <section class="opening" id="opening">
+
+    <!-- The wall. The poster is the same frame the clip opens on, so every
+         fallback path (no JS, refused autoplay, reduced motion, decode
+         error) shows the same picture the video would have shown. -->
+    <div class="opening__wall" id="openingWall">
+      <img class="opening__poster" src="assets/hero-wide-poster.webp"
+           alt="A plaster wall in the workshop with a recessed Calacatta Viola marble niche cut into it, its plum and gold veining lit from the left"
+           width="1920" height="1088" fetchpriority="high" decoding="async">
+      <video class="opening__video" id="openingVideo"
+             muted playsinline loop preload="metadata"
+             aria-hidden="true" tabindex="-1">
+        <source src="assets/hero-wide-loop.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <!-- Measurements written on the piece itself, the way they are on a
+         shop drawing. Pinned in per-cent to the niche, which holds its
+         place in every frame of the loop. -->
+    <div class="opening__callouts" aria-hidden="true">
+      <span class="dim dim--w">width: yours</span>
+      <span class="dim dim--h">depth: yours</span>
+    </div>
+
+    <div class="opening__copy">
+      <div class="opening__text">
+        <h1>
+          Send us the opening.
+          <span class="cut">We cut the basin, the niche or the shelf to fit it, from a single block of natural stone.</span>
+        </h1>
+        <p class="opening__lede">
+          Every piece here is carved to order in our own workshop. There is no stock size,
+          so the measurement you give us is the measurement you receive<span class="lede__more"> — which is why
+          architects and contractors use us for bathrooms that have already been tiled</span>.
+        </p>
+        <div class="opening__actions">
+          <a class="btn btn--solid" href="https://www.etsy.com/shop/ClassMarble">See all 47 pieces on Etsy</a>
+          <a class="btn btn--edge" href="#project">Start a project order</a>
+        </div>
       </div>
     </div>
 
-    <figure class="elevation" id="elevation">
-      <div class="elevation__plate">
-        <img src="assets/niche-calacatta-viola.webp"
-             alt="Recessed Calacatta Viola marble shower niche mounted in a plaster wall, its plum veining running through the carved basin"
-             width="848" height="1000" fetchpriority="high">
-
-        <!-- The cut line: drawn in the rail's own language before the stone
-             appears inside it. Sized to the plate, so the rectangle is the
-             opening the copy is talking about. -->
-        <svg class="cutline" viewBox="0 0 848 1120" preserveAspectRatio="none"
-             fill="none" aria-hidden="true" focusable="false">
-          <!-- pathLength normalises the perimeter to 100 units, so the dash
-               maths below is independent of the rendered plate size. -->
-          <rect class="cutline__rect" x="0.75" y="0.75" width="846.5" height="1118.5"
-                pathLength="100" vector-effect="non-scaling-stroke"></rect>
-        </svg>
-
-        <span class="dim dim--w">width: yours</span>
-        <span class="dim dim--h">depth: yours</span>
-      </div>
-      <figcaption class="elevation__cap">
-        <span>Calacatta Viola shower niche</span>
-        <span>$615.00</span>
-      </figcaption>
-    </figure>
+    <a class="opening__cue" href="#register">The shop's numbers</a>
   </section>
 
   <!-- The shop's real register. Numbers a cautious buyer checks first. -->
-  <section class="wrap band--tight">
+  <section class="wrap band--tight" id="register">
     <div class="register">
       <div class="register__cell">
         <span class="register__fig">4.8 / 5</span>
@@ -506,111 +508,79 @@
 </div>
 
 <script>
-/* The opening cuts itself, then the stone settles into the photograph.
-   Strictly additive: the plate already contains the finished photograph,
-   so every failure path below simply leaves it alone. */
+/* The wall runs the full window. Two jobs here, both strictly additive:
+   measure the fixed strips above the hero so 100svh is honest, and start
+   the loop only when it can actually play. Every failure path below leaves
+   the poster — the clip's own opening frame — standing. */
 (function () {
-  var TIMING = {
-    hold:  180,   // a beat of bare plaster before the blade starts
-    cut:   900,   // the rectangle draws itself
-    open:  620,   // stone opens out inside the finished line
-    dim:  3200,   // callouts wait for the camera to reveal the whole piece
-    fade:  500    // last frame crossfades into the still photograph
-  };
+  var band = document.querySelector('.demo-band');
+  var mast = document.querySelector('.masthead');
+  var root = document.documentElement;
 
-  var plate = document.querySelector('#elevation .elevation__plate');
-  if (!plate) return;
+  // 100svh is the whole window; the hero owns what is left under the two
+  // strips that sit above it. Measured, not guessed, because both wrap.
+  function measure() {
+    root.style.setProperty('--band-h', (band ? band.offsetHeight : 0) + 'px');
+    root.style.setProperty('--mast-h', (mast ? mast.offsetHeight : 0) + 'px');
+  }
+  measure();
+  var mt;
+  window.addEventListener('resize', function () {
+    clearTimeout(mt);
+    mt = setTimeout(measure, 120);
+  }, { passive: true });
 
-  var img = plate.querySelector('img');
+  var video = document.getElementById('openingVideo');
+  var opening = document.getElementById('opening');
+  if (!video || !opening) return;
+
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  // Reduced motion, no video support, or a stale browser: the still stands.
-  if (reduce.matches) return;
-
-  var probe = document.createElement('video');
-  if (!probe.canPlayType || !probe.canPlayType('video/mp4; codecs="avc1.42E01E"')) return;
-
-  plate.style.setProperty('--cut-hold', TIMING.hold + 'ms');
-  plate.style.setProperty('--cut-dur', TIMING.cut + 'ms');
-  plate.style.setProperty('--open-dur', TIMING.open + 'ms');
-  plate.style.setProperty('--dim-delay', TIMING.dim + 'ms');
-  plate.style.setProperty('--reveal-fade', TIMING.fade + 'ms');
-
-  var video = document.createElement('video');
-  video.className = 'elevation__video';
-  video.muted = true;
-  video.defaultMuted = true;
-  video.playsInline = true;
-  video.setAttribute('playsinline', '');
-  video.setAttribute('muted', '');
-  video.loop = false;
-  video.controls = false;
-  video.preload = 'metadata';
-  video.setAttribute('aria-hidden', 'true');
-  video.setAttribute('tabindex', '-1');
-  // The poster is the still that is already decoded for the plate, so the
-  // video never paints a frame the page has not shown yet.
-  video.poster = 'assets/niche-calacatta-viola.webp';
-  video.src = 'assets/hero-reveal.mp4';
-
-  var done = false;
-  var timers = [];
-  var after = function (ms, fn) { timers.push(setTimeout(fn, ms)); };
-
-  // Any failure at any point lands on the finished photograph, once.
-  function settle() {
-    if (done) return;
-    done = true;
-    for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]);
-    plate.classList.remove('is-cutting', 'is-playing');
-    plate.classList.add('is-settling');
-    after(TIMING.fade + 260, function () {
-      plate.classList.remove('is-settling');
-      if (video.parentNode) video.parentNode.removeChild(video);
-    });
+  // Reduced motion: the wall holds still. The poster is already painted,
+  // so the clip is simply never fetched.
+  if (reduce.matches) {
+    video.removeAttribute('preload');
+    return;
   }
 
-  video.addEventListener('error', settle);
-  video.addEventListener('stalled', settle);
-  video.addEventListener('ended', settle);
+  if (!video.canPlayType || !video.canPlayType('video/mp4; codecs="avc1.42E01E"')) return;
 
-  function run() {
-    plate.insertBefore(video, img.nextSibling);
-    plate.classList.add('is-cutting');
+  // Only reveal the video once it is genuinely running, so a refused
+  // autoplay or a stall never swaps the poster for a blank rectangle.
+  function live() {
+    if (video.readyState >= 2 && !video.paused) opening.classList.add('is-live');
+  }
+  video.addEventListener('playing', live);
+  video.addEventListener('error', function () { opening.classList.remove('is-live'); });
+  video.addEventListener('stalled', function () { opening.classList.remove('is-live'); });
 
-    after(TIMING.hold + TIMING.cut, function () {
-      if (done) return;
-      plate.classList.remove('is-cutting');
-      plate.classList.add('is-playing');
-
-      var p = video.play();
-      if (p && typeof p.catch === 'function') {
-        // Autoplay refused (data saver, low power mode): fall through quietly.
-        p.catch(settle);
-      }
-
-      // Backstop: if 'ended' never fires, settle on the clip's own length.
-      var dur = isFinite(video.duration) && video.duration > 0 ? video.duration : 5.05;
-      after(dur * 1000 + 400, settle);
-    });
+  function start() {
+    video.preload = 'auto';
+    video.load();
+    var p = video.play();
+    // Autoplay refused (data saver, low power mode): the poster stands.
+    if (p && typeof p.catch === 'function') p.catch(function () {});
   }
 
-  // Only spend the download once the piece is actually on screen. Without an
-  // observer we simply never start: the photograph is already the right answer.
-  if (!('IntersectionObserver' in window)) return;
+  // The hero is at the top of the page, so it is on screen immediately;
+  // the observer only spares the download for a browser that opens
+  // mid-document on a restored scroll position.
+  if (!('IntersectionObserver' in window)) { start(); return; }
 
   var io = new IntersectionObserver(function (entries) {
     for (var i = 0; i < entries.length; i++) {
-      if (entries[i].isIntersecting) {
-        io.disconnect();
-        video.preload = 'auto';
-        run();
-        return;
-      }
+      if (entries[i].isIntersecting) { io.disconnect(); start(); return; }
     }
-  }, { threshold: 0.35 });
+  }, { threshold: 0.1 });
+  io.observe(opening);
 
-  io.observe(plate);
+  // A tab returning to the foreground should be showing motion, not a
+  // frozen frame the browser paused while it was hidden.
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden || !opening.classList.contains('is-live')) return;
+    var p = video.play();
+    if (p && typeof p.catch === 'function') p.catch(function () {});
+  });
 })();
 
 (function () {

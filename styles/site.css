@@ -39,6 +39,12 @@
   :root { --rail: 42px; }
 }
 
+@media (max-width: 640px) {
+  /* the masthead wraps to two lines here, so the hero's no-script
+     fallback height has to account for the taller strip */
+  :root { --mast-h: 85px; }
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 
 html { -webkit-text-size-adjust: 100%; }
@@ -199,23 +205,109 @@ a { color: inherit; }
   .masthead__meta span:nth-child(2) { display: none; }
 }
 
-/* ── Opening: the wall elevation ─────────────────────────────── */
+/* ── Opening: the wall itself ─────────────────────────────────
+   The hero is a full-height plate of the workshop's own wall, shot wide.
+   Copy sits on the calm plaster to the left; the niche keeps the right.
+   The video is the subject, not a background texture, so it is full-bleed
+   to the window edge and runs under the rail — the rail stays on top,
+   still measuring, now measuring the wall it is drawn over. */
 
 .opening {
-  padding-top: clamp(2.5rem, 7vw, 6rem);
-  padding-bottom: clamp(3rem, 8vw, 7rem);
-  display: grid;
-  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.82fr);
-  gap: clamp(2rem, 5vw, 4.5rem);
-  align-items: end;
+  position: relative;
+  /* Full window, less the two strips above it. The fallbacks are the
+     measured heights of those strips at this width, so the hero is the
+     right size — and therefore crops the wall the same way — before the
+     script runs and with no script at all. */
+  min-height: calc(100svh - var(--band-h, 38px) - var(--mast-h, 72px));
+  display: flex;
+  align-items: center;
+  /* break out of .page's rail offset and .wrap's max-width: the wall runs
+     the whole window, edge to edge */
+  margin-left: calc(var(--rail) * -1);
+  width: 100vw;
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: clamp(2rem, 5vw, 4rem);
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+  overflow: hidden;
+  background: var(--plaster-lit);
 }
 
+/* ── The wall plate: video, poster, scrim ────────────────────── */
+
+.opening__wall {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background-color: var(--plaster-lit);
+}
+
+/* The poster is a real element rather than a background or the video's
+   own poster attribute, so it takes exactly the same box, fit and origin
+   as the clip. That is what keeps the niche — and the callouts pinned to
+   it — in one place across every state: playing, paused, reduced motion,
+   refused autoplay, no JS. */
+.opening__poster,
+.opening__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 45%;
+}
+
+.opening__video {
+  /* revealed only once the clip is actually playing, so a stalled or
+     refused video never paints a black or half-decoded rectangle */
+  opacity: 0;
+  transition: opacity 700ms linear;
+}
+
+.opening.is-live .opening__video { opacity: 1; }
+
+/* The scrim is the wall's own light, not a dark overlay: plaster-lit
+   pulled left over the copy, gone by the time it reaches the niche.
+   Measured against the vein-heavy frame of the loop (t≈5.1s), where the
+   bare wall falls to L*≈49 in the text column: at 0.82 the ink holds
+   9.7:1 and the softer lede 4.8:1, both past AA, without the page ever
+   going dark. */
+.opening__wall::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to right,
+      rgba(230, 229, 223, 0.94) 0%,
+      rgba(230, 229, 223, 0.90) 26%,
+      rgba(230, 229, 223, 0.82) 40%,
+      rgba(230, 229, 223, 0.46) 54%,
+      rgba(230, 229, 223, 0.10) 62%,
+      rgba(230, 229, 223, 0) 70%
+    );
+}
+
+/* ── Hero copy ───────────────────────────────────────────────── */
+
+.opening__copy {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  /* clears the rail, then keeps the page's own gutter inside it */
+  padding-left: calc(var(--rail) + var(--gutter));
+  padding-right: var(--gutter);
+}
+
+.opening__text { max-width: 43ch; }
+
 @media (max-width: 940px) {
-  .opening {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2.25rem;
-    align-items: start;
-  }
+  .opening__text { max-width: 34ch; }
 }
 
 @media (max-width: 640px) {
@@ -224,6 +316,21 @@ a { color: inherit; }
   .opening h1 .cut { font-size: 0.46em; margin-top: 0.85rem; }
   .opening__actions { gap: 0.6rem; }
   .opening__actions .btn { flex: 1 1 100%; text-align: center; }
+
+  /* On a phone the wall is only a third as wide, so the copy has to give
+     the stone room. The second half of the lede is the same promise the
+     first answer below makes in full, so it comes off here rather than
+     being read over the piece. */
+  .opening__lede .lede__more { display: none; }
+
+  /* The outline button is the one element that would otherwise be read
+     through the stone: on this crop it lands on the niche's lit edge and
+     falls to 1.1:1. Given the plaster it stands on, it holds 12:1. It is
+     filled only here, where the wall is behind it. */
+  .opening .btn--edge {
+    background: var(--plaster-lit);
+    border-color: var(--ink);
+  }
 }
 
 .opening h1 {
@@ -289,164 +396,20 @@ a { color: inherit; }
 }
 .btn--edge:hover { background: var(--ink); color: var(--plaster-lit); }
 
-/* ── The elevation figure ────────────────────────────────────── */
+/* ── Callouts on the niche ───────────────────────────────────
+   The niche holds the same place in every frame of the loop (x 72–90%,
+   y 24–70% of the plate), so the callouts can be pinned to it in per-cent
+   and stay on the stone as the window resizes. They are the page's one
+   piece of drawing language left in the hero: the measurement is the
+   offer, so it is written on the piece itself. */
 
-.elevation {
-  position: relative;
-  align-self: end;
-}
-
-.elevation__plate {
-  background: var(--plaster-lit);
-  position: relative;
-  overflow: hidden;
-}
-
-.elevation__plate img {
-  width: 100%;
-  /* close to the source frame (848x1264) so the niche keeps the wall around it */
-  aspect-ratio: 848 / 1120;
-  object-fit: cover;
-  object-position: center 38%;
-}
-
-/* ── Opening choreography: the opening cuts itself ────────────────
-   The plate starts as bare plaster, a cut line draws itself in the
-   rail's mono/technical language, the stone arrives inside the line,
-   then settles into the still photograph that lives here permanently.
-
-   Everything below is additive: with no JS, no video support or
-   reduced motion, none of these classes are ever set and the plate
-   renders exactly as it did before — the photograph, plainly. */
-
-/* The bare wall the cut is made into. Only ever applied by script. */
-.elevation__plate.is-cutting img,
-.elevation__plate.is-playing img {
-  opacity: 0;
-}
-
-.elevation__plate.is-settling img {
-  opacity: 1;
-  transition: opacity var(--reveal-fade, 500ms) linear;
-}
-
-/* Plaster fill sits under everything while the line draws. */
-.elevation__plate.is-cutting::before,
-.elevation__plate.is-playing::before,
-.elevation__plate.is-settling::before {
-  content: "";
+.opening__callouts {
   position: absolute;
   inset: 0;
-  background: var(--plaster-lit);
-  z-index: 0;
-}
-.elevation__plate.is-settling::before {
-  opacity: 0;
-  transition: opacity var(--reveal-fade, 500ms) linear;
-}
-
-.cutline {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 3;
-  pointer-events: none;
-  opacity: 0;
-}
-
-.cutline__rect {
-  stroke: var(--ink);
-  stroke-width: 1;
-  /* pathLength="100" on the rect: the perimeter is 100 units whatever the
-     plate measures, so one dash of 100 draws the line from a single corner. */
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-}
-
-.is-cutting .cutline,
-.is-playing .cutline {
-  opacity: 1;
-}
-
-/* A blade travels at a steady rate: linear, after a short beat of bare
-   plaster. An eased curve here reads as a UI flourish rather than a cut. */
-.is-cutting .cutline__rect {
-  animation: cut-draw var(--cut-dur, 900ms) linear var(--cut-hold, 180ms) both;
-}
-
-/* Once the stone is in, the line has done its job and thins away. */
-.is-playing .cutline__rect {
-  stroke-dashoffset: 0;
-  opacity: 0.32;
-  transition: opacity 600ms ease 220ms;
-}
-
-.is-settling .cutline {
-  opacity: 0;
-  transition: opacity 420ms ease;
-}
-
-@keyframes cut-draw {
-  from { stroke-dashoffset: 100; }
-  to   { stroke-dashoffset: 0; }
-}
-
-.elevation__video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 38%;
   z-index: 1;
-  opacity: 0;
-  /* The clip opens from the centre of the cut line outward, so the stone
-     appears *inside* the rectangle rather than behind it. */
-  clip-path: inset(50% 50% 50% 50%);
+  pointer-events: none;
 }
 
-.is-playing .elevation__video {
-  opacity: 1;
-  clip-path: inset(0% 0% 0% 0%);
-  transition: clip-path var(--open-dur, 620ms) cubic-bezier(0.22, 0.61, 0.36, 1),
-              opacity 240ms linear;
-}
-
-/* The last frame of the video is the same piece a little larger, warmer
-   and lower than the still. Measured against the still (grid search on
-   the rendered plate crop): scale 0.85, -5% Y and a small cool-down land
-   the carved edges on the photograph's edges, so the crossfade reads as
-   the light settling rather than a cut between two images. */
-.is-settling .elevation__video {
-  opacity: 0;
-  transform: translateY(-5%) scale(0.85);
-  filter: saturate(0.88) brightness(1.06);
-  transition: opacity var(--reveal-fade, 500ms) linear,
-              transform var(--reveal-fade, 500ms) cubic-bezier(0.33, 0, 0.67, 1),
-              filter var(--reveal-fade, 500ms) linear;
-}
-
-/* Callouts measure the piece, so they may not appear until the camera has
-   pulled back far enough for there to be a piece to measure. They fade in
-   over the tail of the clip, not over the macro vein. */
-.elevation__plate.is-cutting .dim,
-.elevation__plate.is-playing .dim {
-  opacity: 0;
-}
-
-.elevation__plate.is-playing .dim {
-  transition: opacity 620ms ease var(--dim-delay, 3200ms);
-  opacity: 1;
-}
-
-.elevation__plate.is-settling .dim {
-  opacity: 1;
-}
-
-.dim { z-index: 4; }
-
-/* dimension callout drawn over the piece: real spec language */
 .dim {
   position: absolute;
   font-family: var(--font-mono);
@@ -467,43 +430,141 @@ a { color: inherit; }
   background: var(--ink);
 }
 
+/* The niche measures X 74.1–91.1%, Y 23.8–69.6% of the plate — sampled off
+   the rendered frame, and stable across the loop. The leader lines below
+   are sized to reach the stone's own edges from the label, so each callout
+   spans the dimension it names instead of pointing at nothing. */
+
+/* width: centred under the niche, leaders running out to both edges */
 .dim--w {
-  left: 50%;
+  left: 82.6%;
   transform: translateX(-50%);
-  bottom: 16%;
+  top: 72.5%;
 }
 .dim--w::before,
 .dim--w::after {
   height: 1px;
-  width: clamp(1.5rem, 4vw, 3.25rem);
+  /* half the niche width (8.5vw of the plate), less half the label box */
+  width: calc(8.5vw - 3.4rem);
+  min-width: 0.7rem;
   top: 50%;
 }
 .dim--w::before { right: 100%; }
 .dim--w::after  { left: 100%; }
 
+/* depth: the rule stands on the stone's left edge, the label steps off it
+   onto the bare wall so the stone is never written over */
 .dim--h {
-  right: 6%;
-  top: 46%;
-  transform: translateY(-50%);
+  left: 74.1%;
+  top: 46.7%;
+  transform: translate(-88%, -50%);
 }
 .dim--h::before,
 .dim--h::after {
   width: 1px;
-  height: clamp(1.1rem, 3vw, 2.5rem);
-  left: 50%;
+  /* half the niche height, less half the label box */
+  height: calc(22.9 * (100svh - var(--band-h, 0px) - var(--mast-h, 0px)) / 100 - 1.1rem);
+  /* the label is offset left of its anchor, so the rule is pushed back
+     onto the stone's edge rather than sitting under the text */
+  left: auto;
+  right: -0.5rem;
 }
 .dim--h::before { bottom: 100%; }
 .dim--h::after  { top: 100%; }
 
-.elevation__cap {
+/* The callouts only make sense while the niche is actually in frame and
+   clear of the copy. Below this the crop tightens onto the stone and the
+   copy takes the width, so the labels come off rather than float loose. */
+@media (max-width: 1100px) {
+  .opening__callouts { display: none; }
+}
+
+/* ── Scroll cue ──────────────────────────────────────────────── */
+
+/* A full window of wall gives no edge to read, so the page says where it
+   continues, in the rail's own mono voice and at the rail's own size. */
+.opening__cue {
+  position: absolute;
+  left: calc(var(--rail) + var(--gutter));
+  bottom: clamp(1.1rem, 2.6vw, 2rem);
+  z-index: 2;
   font-family: var(--font-mono);
   font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  /* --ink-faint is the rail's colour, but the rail sits on flat plaster and
+     this sits on a lit wall: at 0.7rem it measured 3.3:1 there, so the cue
+     takes the body ink instead and clears AA at 5.3:1. */
   color: var(--ink-soft);
-  margin-top: 0.75rem;
+  text-decoration: none;
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.opening__cue:hover { color: var(--ink); }
+
+.opening__cue::after {
+  content: "";
+  width: 1px;
+  height: 1.5rem;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .opening__cue::after {
+    transform-origin: top;
+    animation: cue-draw 2.6s ease-in-out infinite;
+  }
+}
+
+@keyframes cue-draw {
+  0%, 100% { transform: scaleY(0.35); opacity: 0.3; }
+  50%      { transform: scaleY(1);    opacity: 0.6; }
+}
+
+@media (max-width: 640px) {
+  .opening__cue { display: none; }
+}
+
+/* ── Mobile: the wall turns portrait ─────────────────────────
+   A 16:9 wall cropped to a tall window would keep either the copy column
+   or the niche, not both. The crop is pushed right so the niche — the
+   thing being sold — stays in frame, and the scrim turns vertical so the
+   copy reads off the top of the wall instead of its left. */
+
+@media (max-width: 860px) {
+  /* A 16:9 wall cropped to a phone window keeps roughly a third of its
+     width. At 90% the whole niche is inside the frame (measured against
+     the crop: below ~85% the stone starts losing its right edge), and the
+     wall reads as a wall rather than as a slab of texture. */
+  .opening__wall { background-position: 90% 50%; }
+  .opening__video { object-position: 90% 50%; }
+
+  /* The scrim turns with the layout: copy reads off the top of the wall,
+     the stone keeps the bottom of the frame to itself. */
+  .opening__wall::after {
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(230, 229, 223, 0.95) 0%,
+        rgba(230, 229, 223, 0.92) 26%,
+        rgba(230, 229, 223, 0.80) 38%,
+        rgba(230, 229, 223, 0.34) 48%,
+        rgba(230, 229, 223, 0.08) 58%,
+        rgba(230, 229, 223, 0) 68%
+      );
+  }
+
+  /* Copy to the top, so the piece is not read through the paragraph, and
+     the frame ends just under the stone rather than on empty wall. */
+  .opening {
+    align-items: flex-start;
+    min-height: calc(84svh - var(--band-h, 0px) - var(--mast-h, 0px));
+    padding-top: clamp(1.5rem, 5vw, 2.5rem);
+    padding-bottom: 0;
+  }
 }
 
 /* ── Register strip: the shop's real numbers ─────────────────── */
