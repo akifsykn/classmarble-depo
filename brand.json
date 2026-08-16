@@ -1,0 +1,79 @@
+{
+  "shopName": "ClassMarble",
+  "shopUrl": "https://www.etsy.com/shop/ClassMarble",
+  "ownerName": "Abdülkadir",
+  "shopStats": {
+    "sales": 42,
+    "rating": 4.8,
+    "reviewCount": 12,
+    "monthsOnEtsy": 6,
+    "activeListings": 47,
+    "shipsFrom": "Türkiye",
+    "lastActivity": "2026-08-09",
+    "announcementUpdated": "2026-04-04",
+    "source": "firecrawl scrape of shop + listing pages, 2026-08-16"
+  },
+  "categories": [
+    { "name": "Marble Bathroom Sinks", "count": 20 },
+    { "name": "Marble Wall Shelf", "count": 13 },
+    { "name": "Marble Shower Niches", "count": 9 },
+    { "name": "Wine Rack & Holder", "count": 4 },
+    { "name": "Travertine Bookcases", "count": 1 }
+  ],
+  "priceBand": {
+    "min": 144.0,
+    "max": 3209.4,
+    "median": 562.5,
+    "mean": 590.0,
+    "currency": "USD",
+    "note": "39 parsed listings; sinks cluster at 492-877, niches 585-675, shelves 247-867, statement bookcase 3209"
+  },
+  "category": "hand-carved natural stone bathroom architecture — wall-mounted marble vanity basins, recessed shower niches, floating wall shelves, wine racks and a travertine bookcase, cut from Calacatta Viola, Calacatta Gold, Carrara, Lilac Marble, Rosso Levanto, Emperador, Fusion Quartzite and Travertine",
+  "targetAudience": "renovation-stage buyers and the trade: homeowners specifying a bathroom, plus interior designers, architects and contractors sourcing for client projects. Ticket is high (median $562, sinks to $877, bookcase $3209) and the purchase is architectural — the piece is built into a wall, so buyers need dimensions, material certainty and installation confidence before they commit. Shop explicitly serves wholesale/project-based orders.",
+  "brandTone": "material-first and specification-led. Every listing names the stone before the product (Calacatta Viola Marble Shower Niche, Pentagon Calacatta Gold Marble Sink), repeats '100% natural stone' and 'hand carved / handmade' as the core promise, and frames pieces for 'modern, minimalist, spa-style and luxury interiors'. Voice is calm and technical rather than decorative — it answers a builder's questions: custom size, DDP duties covered, wooden crate packaging, 5-10 day production.",
+  "realDifferentiators": [
+    "Custom size on every piece — 'we can produce in any size you need', the single most repeated promise in listings and the top theme in reviews",
+    "DDP shipping — all US orders delivered duty paid, no customs surprise at the door",
+    "Production 5-10 business days, then fast worldwide shipping",
+    "Secure wooden crate packaging — reviewers specifically mention 'arrived well-wrapped in a wooden box'",
+    "Works with interior designers, contractors and businesses on wholesale/project pricing",
+    "Each piece unique — natural veining variation stated up front as character, not defect",
+    "Returns not accepted (made-to-order natural stone) — makes pre-purchase trust essential, which is exactly the gap a brand site closes"
+  ],
+  "colorPalette": {
+    "note": "derived from the shop's own stones as photographed",
+    "shell": "#F4F1EC",
+    "plaster": "#E7E1D8",
+    "graphite": "#23211F",
+    "viola": "#8E4A57",
+    "gold": "#B08A4E",
+    "travertine": "#C9B49A"
+  },
+  "stones": [
+    { "name": "Calacatta Viola", "hex": "#8E4A57", "note": "plum-veined white, the shop's signature statement stone" },
+    { "name": "Calacatta Gold", "hex": "#B08A4E", "note": "warm gold veining on white" },
+    { "name": "Carrara", "hex": "#D6D4CF", "note": "soft grey veining, the classic" },
+    { "name": "Lilac Marble", "hex": "#9B8AA0", "note": "violet-grey, unusual and shop-specific" },
+    { "name": "Rosso Levanto", "hex": "#6B3038", "note": "deep burgundy with white fracture veins" },
+    { "name": "Travertine", "hex": "#C9B49A", "note": "honeyed, open-pored, used for shelves and the bookcase" }
+  ],
+  "heroHeadline": "Stone cut to your wall, not to a catalogue",
+  "signatureIdea": "Wall Section — the hero renders a bathroom wall in elevation, and the visitor switches the stone to see the same niche/basin re-cut in each of the six real stones. It mirrors how this product is actually bought: you are choosing a material for an opening of a fixed size.",
+  "standoutProducts": [
+    { "listingId": "4452816483", "title": "Pentagon Calacatta Gold Marble Sink, Wall Mounted Natural Stone Bathroom Vanity Basin", "price": 877.5, "asset": "sink-pentagon-calacatta-gold.webp" },
+    { "listingId": "4452238565", "title": "Luxury Calacatta Viola Marble Sink – Wall Mounted Hand Carved Natural Stone Basin", "price": 778.5, "asset": "sink-calacatta-viola.webp" },
+    { "listingId": "4482462414", "title": "Recessed Calacatta Viola Marble Shower Niche – Built-in Bathroom Storage Shelf", "price": 615.0, "asset": "niche-calacatta-viola.webp" },
+    { "listingId": "4536554727", "title": "Travertine Bookcase, Natural Stone Narrow Bookshelf, Modern Display Shelf", "price": 3209.4, "asset": "bookcase-travertine.webp" },
+    { "listingId": "4534557155", "title": "Travertine Floating Shelf Set of 3, Handmade Natural Stone Bathroom Wall Shelves", "price": 867.6, "asset": "shelf-travertine-set3.webp" },
+    { "listingId": "4511616769", "title": "Rosso Levanto Marble Shower Niche – Luxury Stone Bathroom Recessed Wall Shelf", "price": 675.0, "asset": "niche-rosso-levanto.webp" }
+  ],
+  "verbatimFacts": {
+    "announcement": "Discover handcrafted marble shower niches and marble sinks made from 100% natural stone. Each piece is carefully crafted to bring timeless elegance and luxury to your bathroom.",
+    "ddp": "No, all US orders are shipped DDP (Delivered Duty Paid). We cover all customs duties and import taxes, so you won't pay any additional fees upon delivery.",
+    "production": "Production usually takes 5-10 business days.",
+    "wholesale": "Yes, we work with interior designers, contractors, and businesses. Contact us for wholesale pricing and project-based orders.",
+    "variation": "Since we use natural stone, each piece is unique. There may be slight variations in color and veining.",
+    "packaging": "Secure wooden crate packaging",
+    "damage": "If your order arrives damaged, please contact us within 48 hours with clear photos of the product and packaging."
+  }
+}
