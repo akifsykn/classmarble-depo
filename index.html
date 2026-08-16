@@ -54,11 +54,23 @@
       </div>
     </div>
 
-    <figure class="elevation">
+    <figure class="elevation" id="elevation">
       <div class="elevation__plate">
         <img src="assets/niche-calacatta-viola.webp"
              alt="Recessed Calacatta Viola marble shower niche mounted in a plaster wall, its plum veining running through the carved basin"
              width="848" height="1000" fetchpriority="high">
+
+        <!-- The cut line: drawn in the rail's own language before the stone
+             appears inside it. Sized to the plate, so the rectangle is the
+             opening the copy is talking about. -->
+        <svg class="cutline" viewBox="0 0 848 1120" preserveAspectRatio="none"
+             fill="none" aria-hidden="true" focusable="false">
+          <!-- pathLength normalises the perimeter to 100 units, so the dash
+               maths below is independent of the rendered plate size. -->
+          <rect class="cutline__rect" x="0.75" y="0.75" width="846.5" height="1118.5"
+                pathLength="100" vector-effect="non-scaling-stroke"></rect>
+        </svg>
+
         <span class="dim dim--w">width: yours</span>
         <span class="dim dim--h">depth: yours</span>
       </div>
@@ -494,6 +506,113 @@
 </div>
 
 <script>
+/* The opening cuts itself, then the stone settles into the photograph.
+   Strictly additive: the plate already contains the finished photograph,
+   so every failure path below simply leaves it alone. */
+(function () {
+  var TIMING = {
+    hold:  180,   // a beat of bare plaster before the blade starts
+    cut:   900,   // the rectangle draws itself
+    open:  620,   // stone opens out inside the finished line
+    dim:  3200,   // callouts wait for the camera to reveal the whole piece
+    fade:  500    // last frame crossfades into the still photograph
+  };
+
+  var plate = document.querySelector('#elevation .elevation__plate');
+  if (!plate) return;
+
+  var img = plate.querySelector('img');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // Reduced motion, no video support, or a stale browser: the still stands.
+  if (reduce.matches) return;
+
+  var probe = document.createElement('video');
+  if (!probe.canPlayType || !probe.canPlayType('video/mp4; codecs="avc1.42E01E"')) return;
+
+  plate.style.setProperty('--cut-hold', TIMING.hold + 'ms');
+  plate.style.setProperty('--cut-dur', TIMING.cut + 'ms');
+  plate.style.setProperty('--open-dur', TIMING.open + 'ms');
+  plate.style.setProperty('--dim-delay', TIMING.dim + 'ms');
+  plate.style.setProperty('--reveal-fade', TIMING.fade + 'ms');
+
+  var video = document.createElement('video');
+  video.className = 'elevation__video';
+  video.muted = true;
+  video.defaultMuted = true;
+  video.playsInline = true;
+  video.setAttribute('playsinline', '');
+  video.setAttribute('muted', '');
+  video.loop = false;
+  video.controls = false;
+  video.preload = 'metadata';
+  video.setAttribute('aria-hidden', 'true');
+  video.setAttribute('tabindex', '-1');
+  // The poster is the still that is already decoded for the plate, so the
+  // video never paints a frame the page has not shown yet.
+  video.poster = 'assets/niche-calacatta-viola.webp';
+  video.src = 'assets/hero-reveal.mp4';
+
+  var done = false;
+  var timers = [];
+  var after = function (ms, fn) { timers.push(setTimeout(fn, ms)); };
+
+  // Any failure at any point lands on the finished photograph, once.
+  function settle() {
+    if (done) return;
+    done = true;
+    for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]);
+    plate.classList.remove('is-cutting', 'is-playing');
+    plate.classList.add('is-settling');
+    after(TIMING.fade + 260, function () {
+      plate.classList.remove('is-settling');
+      if (video.parentNode) video.parentNode.removeChild(video);
+    });
+  }
+
+  video.addEventListener('error', settle);
+  video.addEventListener('stalled', settle);
+  video.addEventListener('ended', settle);
+
+  function run() {
+    plate.insertBefore(video, img.nextSibling);
+    plate.classList.add('is-cutting');
+
+    after(TIMING.hold + TIMING.cut, function () {
+      if (done) return;
+      plate.classList.remove('is-cutting');
+      plate.classList.add('is-playing');
+
+      var p = video.play();
+      if (p && typeof p.catch === 'function') {
+        // Autoplay refused (data saver, low power mode): fall through quietly.
+        p.catch(settle);
+      }
+
+      // Backstop: if 'ended' never fires, settle on the clip's own length.
+      var dur = isFinite(video.duration) && video.duration > 0 ? video.duration : 5.05;
+      after(dur * 1000 + 400, settle);
+    });
+  }
+
+  // Only spend the download once the piece is actually on screen. Without an
+  // observer we simply never start: the photograph is already the right answer.
+  if (!('IntersectionObserver' in window)) return;
+
+  var io = new IntersectionObserver(function (entries) {
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].isIntersecting) {
+        io.disconnect();
+        video.preload = 'auto';
+        run();
+        return;
+      }
+    }
+  }, { threshold: 0.35 });
+
+  io.observe(plate);
+})();
+
 (function () {
   // Draw the measuring edge: a tick every 20px of real scroll height,
   // a longer tick every 100px. Real elements, real increments.

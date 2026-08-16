@@ -310,6 +310,142 @@ a { color: inherit; }
   object-position: center 38%;
 }
 
+/* ── Opening choreography: the opening cuts itself ────────────────
+   The plate starts as bare plaster, a cut line draws itself in the
+   rail's mono/technical language, the stone arrives inside the line,
+   then settles into the still photograph that lives here permanently.
+
+   Everything below is additive: with no JS, no video support or
+   reduced motion, none of these classes are ever set and the plate
+   renders exactly as it did before — the photograph, plainly. */
+
+/* The bare wall the cut is made into. Only ever applied by script. */
+.elevation__plate.is-cutting img,
+.elevation__plate.is-playing img {
+  opacity: 0;
+}
+
+.elevation__plate.is-settling img {
+  opacity: 1;
+  transition: opacity var(--reveal-fade, 500ms) linear;
+}
+
+/* Plaster fill sits under everything while the line draws. */
+.elevation__plate.is-cutting::before,
+.elevation__plate.is-playing::before,
+.elevation__plate.is-settling::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--plaster-lit);
+  z-index: 0;
+}
+.elevation__plate.is-settling::before {
+  opacity: 0;
+  transition: opacity var(--reveal-fade, 500ms) linear;
+}
+
+.cutline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.cutline__rect {
+  stroke: var(--ink);
+  stroke-width: 1;
+  /* pathLength="100" on the rect: the perimeter is 100 units whatever the
+     plate measures, so one dash of 100 draws the line from a single corner. */
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.is-cutting .cutline,
+.is-playing .cutline {
+  opacity: 1;
+}
+
+/* A blade travels at a steady rate: linear, after a short beat of bare
+   plaster. An eased curve here reads as a UI flourish rather than a cut. */
+.is-cutting .cutline__rect {
+  animation: cut-draw var(--cut-dur, 900ms) linear var(--cut-hold, 180ms) both;
+}
+
+/* Once the stone is in, the line has done its job and thins away. */
+.is-playing .cutline__rect {
+  stroke-dashoffset: 0;
+  opacity: 0.32;
+  transition: opacity 600ms ease 220ms;
+}
+
+.is-settling .cutline {
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+
+@keyframes cut-draw {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.elevation__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+  z-index: 1;
+  opacity: 0;
+  /* The clip opens from the centre of the cut line outward, so the stone
+     appears *inside* the rectangle rather than behind it. */
+  clip-path: inset(50% 50% 50% 50%);
+}
+
+.is-playing .elevation__video {
+  opacity: 1;
+  clip-path: inset(0% 0% 0% 0%);
+  transition: clip-path var(--open-dur, 620ms) cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 240ms linear;
+}
+
+/* The last frame of the video is the same piece a little larger, warmer
+   and lower than the still. Measured against the still (grid search on
+   the rendered plate crop): scale 0.85, -5% Y and a small cool-down land
+   the carved edges on the photograph's edges, so the crossfade reads as
+   the light settling rather than a cut between two images. */
+.is-settling .elevation__video {
+  opacity: 0;
+  transform: translateY(-5%) scale(0.85);
+  filter: saturate(0.88) brightness(1.06);
+  transition: opacity var(--reveal-fade, 500ms) linear,
+              transform var(--reveal-fade, 500ms) cubic-bezier(0.33, 0, 0.67, 1),
+              filter var(--reveal-fade, 500ms) linear;
+}
+
+/* Callouts measure the piece, so they may not appear until the camera has
+   pulled back far enough for there to be a piece to measure. They fade in
+   over the tail of the clip, not over the macro vein. */
+.elevation__plate.is-cutting .dim,
+.elevation__plate.is-playing .dim {
+  opacity: 0;
+}
+
+.elevation__plate.is-playing .dim {
+  transition: opacity 620ms ease var(--dim-delay, 3200ms);
+  opacity: 1;
+}
+
+.elevation__plate.is-settling .dim {
+  opacity: 1;
+}
+
+.dim { z-index: 4; }
+
 /* dimension callout drawn over the piece: real spec language */
 .dim {
   position: absolute;
