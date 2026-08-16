@@ -1,0 +1,77 @@
+{
+  "_purpose": "ClassMarble ürün görsellerinin Higgsfield i2i restyle'ı için turnkey spec. Göknur v2.1 akışının ClassMarble karşılığı. Higgsfield MCP araçlarına erişimi olan oturum bu dosyayı okuyup doğrudan uygular.",
+  "_status": "PENDING — restyle henüz uygulanmadı. Higgsfield MCP araçları (generate_image / models_explore) alt-agent oturumunda erişilebilir değildi; üretim adımı ana oturumda çalıştırılmalı.",
+  "model": {
+    "primary": "nano_banana_2",
+    "reason": "Göknur v2.1'de aynı iş için kullanıldı ve ürün geometrisi/damar deseni korunarak sadece ortam değiştirilebildi. models_explore(action:'recommend', type:'image') ile teyit et; i2i/edit yeteneği şart.",
+    "mode": "image-to-image / edit — TEXT-TO-IMAGE KULLANMA. Ürünler gerçek; sıfırdan üretim uydurma ürün demektir."
+  },
+
+  "artDirection": {
+    "name": "Mimari şartname / cold spec studio",
+    "mustDifferFrom": "Göknur'un krem-sıcak stüdyo tonu KOPYALANMAYACAK. Göknur = warm cream plinth, honeyed light. ClassMarble = cold plaster/graphite, mimari.",
+    "backdrop": "Düz, mat, kaba dokulu soğuk sıva duvar (#E7E1D8 plaster-deep) — mikro dokusu görünsün, desen/fayda/derz OLMASIN. Ürünün altında/arkasında zemin çizgisi belirsiz, sonsuz yüzey.",
+    "light": "Soğuk nötr gün ışığı, tek büyük yumuşak kaynak sol-üstten (~5200-5600K). Sert gölge yok; ürünün sağ-altında yumuşak, kısa, nötr-gri gölge. Sıcak/altın ışık YASAK.",
+    "palette": {
+      "backdrop": "#E7E1D8",
+      "backdropShadow": "#CFC7BC",
+      "accentAllowedOnlyFromStone": true,
+      "forbidden": ["lacivert/navy duvar", "zeytin yeşili duvar", "ahşap vanity/dolap", "pirinç-altın armatür", "beyaz metro fayans", "halı/kilim", "bitki/yeşillik", "sıcak sarı ışık"]
+    },
+    "styling": "Prop YOK ya da en fazla tek nötr obje. Sabunluk, havlu, sünger, şişe, kitap, bitki, şarap kadehi gibi Etsy-styling proplarını KALDIR. Ürün tek başına, mimari bir örnek gibi dursun.",
+    "camera": "Düz, hafif yükseklik; perspektif bozulması minimum. Ürün kadraja ortalanmış, nefes payı bırakılmış. Lens: 50-85mm hissi.",
+    "finish": "Fotoğraf gerçekçiliği. Render/CGI/illüstrasyon hissi YASAK. Taş gözenekleri ve damar dokusu net kalsın."
+  },
+
+  "hardConstraints": [
+    "Ürün geometrisi birebir korunacak: basen dış hattı ve kenar sayısı (ör. pentagon 5 kenar), niş iç ölçü oranları ve raf bölmesi sayısı, raf kalınlığı ve kenar profili (chiseled/irregular), şişe/kadeh delik sayısı.",
+    "Damar deseni (veining) ve taş rengi orijinal fotoğrafla eşleşecek — Calacatta Viola'nın erik damarı, Rosso Levanto'nun bordo+beyaz kırık damarı, Travertine'in açık gözenekleri, Lilac'in menekşe-gri tonu. Damar YENİDEN ÇİZİLMEYECEK.",
+    "Ürün sayısı değişmeyecek (set of 3 = 3 raf).",
+    "Görsele metin/logo/watermark EKLENMEYECEK.",
+    "Çıktı boyutu (width x height) girdiyle AYNI kalacak — index.html img width/height attribute'ları sabit."
+  ],
+
+  "promptTemplate": "Editorial architectural product photograph. Keep the {PRODUCT} exactly as in the source image — identical geometry, identical proportions, identical stone colour and vein pattern, identical carved edges. Change ONLY the surrounding environment and lighting. Place it against a flat matte cold lime-plaster wall in pale grey-beige (#E7E1D8), fine mineral texture, no tiles, no grout lines, no pattern. Cool neutral daylight from the upper left, single large soft source, soft short neutral-grey shadow to the lower right, no warm or golden cast. Remove all styling props ({PROPS_TO_REMOVE}). No text, no logo, no watermark. Photorealistic, sharp stone pores and veining, calm architectural specification mood, 50mm perspective.",
+
+  "negativePrompt": "warm golden light, cream tone, navy wall, olive wall, wood cabinet, brass fixtures, chrome shower fittings, subway tile, grout lines, towels, soap bottles, sponge, plants, rug, books, wine glass, text, lettering, watermark, logo, CGI render, illustration, distorted geometry, changed vein pattern, extra objects",
+
+  "images": [
+    { "file": "sink-pentagon-calacatta-gold.webp", "size": "648x1400", "product": "pentagon five-sided wall-mounted Calacatta Gold marble basin", "geometryLock": "exactly 5 sides on the front face; gold-brown veining on warm white; wall-mounted with no pedestal", "propsToRemove": "navy wall, gold-framed mirror, brass faucet and towel ring, white towel, black soap dispenser, wooden cabinet, dark floor tiles", "severity": "high" },
+    { "file": "sink-calacatta-viola.webp", "size": "1400x1045", "product": "rectangular wall-mounted Calacatta Viola marble basin with integrated sloped basin", "geometryLock": "rectangular trough form, plum/purple veining on white, single drain hole position", "propsToRemove": "olive-green wall, brass faucet and towel ring, white towel, amber soap bottle, wooden vanity, subway tile, mirror", "severity": "high" },
+    { "file": "sink-lilac.webp", "size": "1400x648", "product": "wall-mounted Lilac marble rectangular basin", "geometryLock": "rectangular basin, violet-grey stone with soft veining, drain position", "propsToRemove": "dark green/olive wall, brass faucet, mirror frame, wooden counter, towel", "severity": "high" },
+    { "file": "sink-carrara.webp", "size": "1400x670", "product": "wall-mounted Carrara marble rectangular vanity basin", "geometryLock": "rectangular basin with squared apron, soft grey veining on white", "propsToRemove": "navy panelled wall, brass faucet and towel bar, gold mirror, wooden vanity, rolled towels", "severity": "high" },
+    { "file": "sink-carrara-backsplash.webp", "size": "1400x648", "product": "Carrara marble basin with integral backsplash", "geometryLock": "basin plus upstand backsplash as one carved piece, grey veining", "propsToRemove": "navy wainscot wall, brass wall-mounted taps, wood vanity, mirror, towel ring", "severity": "high" },
+    { "file": "sink-lilac-vessel.webp", "size": "1400x1045", "product": "rectangular Lilac marble vessel basin, wall mounted", "geometryLock": "rectangular vessel, violet-grey stone, wall-mounted bracket-free look", "propsToRemove": "dark wall, brass fittings, wooden counter, decor objects, towels", "severity": "high" },
+    { "file": "niche-calacatta-viola.webp", "size": "933x1400", "product": "recessed Calacatta Viola marble shower niche, single opening with shelf", "geometryLock": "single rectangular recess with one lower shelf ledge; plum veining with gold-ochre patches; surround frame proportions", "propsToRemove": "surrounding marble shower wall, glass screen, rainfall shower head, hand shower rail, controls, amber bottle, soap bar, natural sponge, recessed ceiling light", "severity": "high" },
+    { "file": "niche-carrara.webp", "size": "648x1400", "product": "recessed Carrara marble shower niche with two compartments", "geometryLock": "TWO stacked compartments separated by one horizontal divider; soft grey veining", "propsToRemove": "white subway tile wall, shower head, valve control, bottles, sponge, folded towels", "severity": "high" },
+    { "file": "niche-rosso-levanto.webp", "size": "896x1194", "product": "recessed Rosso Levanto marble shower niche with two compartments", "geometryLock": "TWO compartments with one divider shelf; deep burgundy stone with white fracture veins; rectangular surround", "propsToRemove": "white marble shower wall, glass screen, shower rail and head, bottles, sponge, soap bar, linear drain", "severity": "high" },
+    { "file": "niche-travertine.webp", "size": "880x1200", "product": "recessed travertine shower niche, built-in", "geometryLock": "recess proportions and shelf count as in source; honeyed open-pored travertine texture", "propsToRemove": "whole bathroom scene — subway tile, vanity, mirror, bathtub, window, towels, plants, brass taps", "severity": "high", "note": "Kaynak geniş bir banyo çekimi; niş küçük kalıyor. Restyle sırasında nişe yakınlaş (crop+restyle), ürün kadrajın ana öznesi olsun." },
+    { "file": "shelf-calacatta-viola-irregular.webp", "size": "1400x1050", "product": "Calacatta Viola marble floating wall shelf with irregular sculptural edge", "geometryLock": "irregular/organic front edge profile must match source exactly; plum veining; single slab thickness", "propsToRemove": "reed diffuser, ceramic pot, glass vase with olive branch, wooden window frame, warm shadow pattern", "severity": "medium" },
+    { "file": "shelf-travertine-set3.webp", "size": "1123x1400", "product": "set of THREE travertine floating wall shelves", "geometryLock": "exactly 3 shelves, stacked, matching thickness and spacing as source", "propsToRemove": "bathroom scene, glass shower, brass fittings, bottles, folded towels, basket, vases, plants, sconce, mirror, vanity", "severity": "high" },
+    { "file": "shelf-black-marble.webp", "size": "1400x933", "product": "black marble floating wall shelf", "geometryLock": "single rectangular slab, squared edge, matte black stone", "propsToRemove": "BURNED-IN TEXT 'BLACK MARBLE' and decorative rule/ornament, warm golden travertine tiled backdrop", "severity": "critical", "note": "Görselde satış amaçlı kazınmış serif metin var — marka sitesinde kabul edilemez. Metin tamamen kalkmalı." },
+    { "file": "shelf-rosso-levanto.webp", "size": "1400x933", "product": "Rosso Levanto marble floating wall shelf", "geometryLock": "single rectangular slab; burgundy with white fracture veins; squared edge", "propsToRemove": "BURNED-IN TEXT 'ROSSO LEVANTO MARBLE' and decorative rule/ornament, warm golden travertine tiled backdrop", "severity": "critical", "note": "Aynı kazınmış metin sorunu." },
+    { "file": "shelf-travertine-chiseled.webp", "size": "1400x1050", "product": "travertine floating shelf with hand-chiseled raw edges", "geometryLock": "chiseled/rough front edge profile preserved; open-pored travertine; thick slab", "propsToRemove": "black-framed window, succulent in dark pot, leather journals, brass puck, terracotta vessel, wood floor, warm sunlight", "severity": "medium" },
+    { "file": "bookcase-travertine.webp", "size": "1120x1400", "product": "narrow freestanding travertine bookcase", "geometryLock": "shelf compartment count and proportions exactly as source; travertine texture", "propsToRemove": "living-room scene — sofa, fireplace, olive tree, terracotta pot, rug, framed art, books and decor inside shelves", "severity": "high" },
+    { "file": "wine-calacatta-viola.webp", "size": "773x1400", "product": "Calacatta Viola marble wine bottle holder, vertical block with bore holes", "geometryLock": "number and position of bottle bore holes must match source; plum veining", "propsToRemove": "wine bottles, poured glass of red wine, marble tabletop, warm backdrop", "severity": "medium" },
+    { "file": "wine-glass-travertine.webp", "size": "1035x735", "product": "wall-mounted travertine stemware rack", "geometryLock": "number of stemware slots must match source; travertine slab thickness and mounting", "propsToRemove": "hanging wine glasses, wine bottle, cork bowl, rustic wood console, corkscrew, cloth, textured warm wall", "severity": "medium" }
+  ],
+
+  "verification": {
+    "script": "tools/verify-restyle.sh",
+    "gates": [
+      "Boyut: çıktı width x height girdiyle birebir aynı (index.html sabit attribute).",
+      "Dosya boyutu: 25-260KB WebP. NOT: Göknur referans seti 32-88KB; temiz düz arka plan çok iyi sıkıştığı için restyle sonrası dosyaların KÜÇÜLMESİ beklenir ve bu kalite düşüşü değil başarı işaretidir. Akif'in belirttiği ~60-250KB aralığı mevcut ham dosyaların tarifiydi, kalite şartı değil.",
+      "Arka plan tutarlılığı: sol-üst köşe örneği 210-240 aralığında ve R-B farkı < 18 (nötr-soğuk). Göknur referansı: 216-234.",
+      "Ortalama parlaklık: 150-215 bandı; set içi standart sapma < 25.",
+      "Geometri: orijinal vs yeni yan yana montage ile GÖZLE denetle — kenar sayısı, bölme sayısı, delik sayısı, damar deseni. Sapma varsa REDDET ve yeniden üret.",
+      "Metin: shelf-black-marble ve shelf-rosso-levanto'da hiçbir harf kalmamalı."
+    ]
+  },
+
+  "postProcess": [
+    "Çıktıyı WebP'ye çevir: cwebp/convert -quality 82 (60-250KB hedefi).",
+    "assets/ altına AYNI dosya adıyla üzerine yaz.",
+    "_sources.json'a DOKUNMA (listingId/sourceUrl provenance korunur). Sadece işin sonunda _note alanı eklenebilir.",
+    "index.html'deki width/height attribute'ları değişmemeli."
+  ]
+}
